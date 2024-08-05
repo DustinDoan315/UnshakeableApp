@@ -12,38 +12,55 @@ import ForgotPasswordScreen2 from "./screens/ForgotPasswordScreen2";
 import ContactUsScreen from "./screens/ContactUsScreen";
 import ContactUsSuccessScreen from "./screens/ContactUsSuccessScreen";
 import ContactUsErrorScreen from "./screens/ContactUsErrorScreen";
+import { SafeAreaView, StatusBar } from "react-native";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import OtpScreen from "./screens/OtpScreen";
 
 const Stack = createStackNavigator();
 
 const App = () => {
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home">
-        {/* <Stack.Screen name="Home" component={HomeScreen} /> */}
-        <Stack.Screen name="SignUp" component={SignUpScreen} />
-        <Stack.Screen name="Subscription" component={SubscriptionScreen} />
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen
-          name="MultiFactorAuth"
-          component={MultiFactorAuthScreen}
-        />
-        <Stack.Screen name="PasswordReset" component={PasswordResetScreen} />
-        <Stack.Screen
-          name="ForgotPassword1"
-          component={ForgotPasswordScreen1}
-        />
-        <Stack.Screen
-          name="ForgotPassword2"
-          component={ForgotPasswordScreen2}
-        />
-        <Stack.Screen name="ContactUs" component={ContactUsScreen} />
-        <Stack.Screen
-          name="ContactUsSuccess"
-          component={ContactUsSuccessScreen}
-        />
-        <Stack.Screen name="ContactUsError" component={ContactUsErrorScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <SafeAreaView
+      style={{
+        flex: 1,
+        backgroundColor: "black",
+      }}>
+      <StatusBar backgroundColor={"transparent"} barStyle={"light-content"} />
+      <NavigationContainer>
+        <Stack.Navigator
+          initialRouteName="Login"
+          screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="SignUp" component={SignUpScreen} />
+          <Stack.Screen name="Subscription" component={SubscriptionScreen} />
+          <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="OTP" component={OtpScreen} />
+          <Stack.Screen name="Home" component={HomeScreen} />
+
+          <Stack.Screen
+            name="MultiFactorAuth"
+            component={MultiFactorAuthScreen}
+          />
+          <Stack.Screen name="PasswordReset" component={PasswordResetScreen} />
+          <Stack.Screen
+            name="ForgotPassword1"
+            component={ForgotPasswordScreen1}
+          />
+          <Stack.Screen
+            name="ForgotPassword2"
+            component={ForgotPasswordScreen2}
+          />
+          <Stack.Screen name="ContactUs" component={ContactUsScreen} />
+          <Stack.Screen
+            name="ContactUsSuccess"
+            component={ContactUsSuccessScreen}
+          />
+          <Stack.Screen
+            name="ContactUsError"
+            component={ContactUsErrorScreen}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </SafeAreaView>
   );
 };
 

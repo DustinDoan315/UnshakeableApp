@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -10,19 +10,21 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Video, ResizeMode } from "expo-av";
+import { LinearGradient } from "expo-linear-gradient";
+import { height, width } from "../utils/response";
+import { assets } from "../assets";
 
-const { width, height } = Dimensions.get("window");
-
-// Ensure videoSource is a valid path or URI
 const videoSource = require("../assets/introVid.mp4");
+
 const LoginScreen = () => {
   const navigation = useNavigation();
-  const [status, setStatus] = React.useState({});
+  const [status, setStatus] = useState({});
   const videoRef = useRef(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     startPlayback();
   }, []);
+
   const startPlayback = async () => {
     if (videoRef.current) {
       try {
@@ -32,23 +34,28 @@ const LoginScreen = () => {
       }
     }
   };
+
   return (
     <View style={styles.container}>
       <Video
         ref={videoRef}
         source={videoSource}
         style={styles.video}
-        useNativeControls
         resizeMode={ResizeMode.CONTAIN}
         isLooping
         onPlaybackStatusUpdate={(status) => setStatus(() => status)}
       />
+      <Image
+        resizeMode="cover"
+        source={assets.logo_without_text}
+        style={{
+          alignSelf: "center",
+          marginTop: 100,
+          width: 275,
+          height: 250,
+        }}
+      />
       <View style={styles.overlay}>
-        {/* Uncomment and use if logo is available */}
-        {/* <Image
-          source={require("../assets/Unshakeable_Full_Color_Logomark Minus_Text@3x.png")}
-          style={styles.logo}
-        /> */}
         <TextInput
           style={styles.textField}
           placeholder="Email"
@@ -60,18 +67,24 @@ const LoginScreen = () => {
           placeholderTextColor="#9A9A9A"
           secureTextEntry
         />
-        <TouchableOpacity>
+        <TouchableOpacity style={styles.forgotPasswordContainer}>
           <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
         </TouchableOpacity>
-        <TouchableOpacity
+        <LinearGradient
+          start={{ x: 0, y: 0.1 }}
+          end={{ x: 0, y: 1 }}
           style={styles.loginButton}
-          onPress={() => navigation.navigate("Home")}>
-          <Text style={styles.loginButtonText}>Login</Text>
-        </TouchableOpacity>
-        <Text style={styles.dontHaveAccountText}>Don’t have an account?</Text>
-        <TouchableOpacity onPress={() => navigation.navigate("SignUp")}>
-          <Text style={styles.signUpText}>Sign Up</Text>
-        </TouchableOpacity>
+          colors={["#1375C1", "#61AEE9"]}>
+          <TouchableOpacity onPress={() => navigation.navigate("Home")}>
+            <Text style={styles.loginButtonText}>Login</Text>
+          </TouchableOpacity>
+        </LinearGradient>
+        <View style={styles.signUpContainer}>
+          <Text style={styles.dontHaveAccountText}>Don’t have an account?</Text>
+          <TouchableOpacity onPress={() => navigation.navigate("SignUp")}>
+            <Text style={styles.signUpText}>Sign Up</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
@@ -80,25 +93,18 @@ const LoginScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: "black",
   },
   video: {
-    width,
-    height,
+    width: width,
+    height: height * 0.9,
     position: "absolute",
   },
   overlay: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0,0,0,0.5)",
-    padding: 20,
-  },
-  logo: {
-    width: 227,
-    height: 227,
-    marginBottom: 20,
+    paddingHorizontal: 20,
   },
   textField: {
     width: 318,
@@ -107,10 +113,18 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     marginBottom: 12,
     paddingHorizontal: 10,
+    borderRadius: 8,
     shadowColor: "#000",
+    fontSize: 15,
+    fontFamily: "Open Sans Regular",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.25,
     shadowRadius: 4,
+  },
+  forgotPasswordContainer: {
+    alignSelf: "flex-end",
+    marginRight: 25,
+    marginTop: -7,
   },
   forgotPasswordText: {
     fontSize: 14,
@@ -123,13 +137,18 @@ const styles = StyleSheet.create({
     height: 44,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#1375C1", // Adjusted for React Native as linear gradients are not supported directly
+    borderRadius: 8,
     marginBottom: 20,
   },
   loginButtonText: {
     fontSize: 18,
     fontFamily: "Open Sans Bold",
     color: "#FFFFFF",
+  },
+  signUpContainer: {
+    flexDirection: "row",
+    position: "absolute",
+    bottom: 0,
   },
   dontHaveAccountText: {
     fontSize: 15,

@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { View, StyleSheet, Dimensions } from "react-native";
-import Video from "react-native-video";
+import { Video, ResizeMode } from "expo-av";
 import { useNavigation } from "@react-navigation/native";
 
 const IntroScreen = () => {
