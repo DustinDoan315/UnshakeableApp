@@ -5,14 +5,11 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  Dimensions,
-  Image,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Video, ResizeMode } from "expo-av";
 import { LinearGradient } from "expo-linear-gradient";
 import { height, width } from "../utils/response";
-import { assets } from "../assets";
 import Logo from "../components/Logo";
 
 const videoSource = require("../assets/introVid.mp4");
