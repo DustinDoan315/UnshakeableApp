@@ -6,19 +6,17 @@ import {
   TouchableOpacity,
   StyleSheet,
   Dimensions,
-  Image,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { Video, ResizeMode } from "expo-av";
 import { LinearGradient } from "expo-linear-gradient";
-import Logo from "../components/Logo";
 import CustomHeader from "../components/CustomHeader";
+import Logo from "../components/Logo";
+import { ResizeMode, Video } from "expo-av";
 import { assets } from "../assets";
+import { height } from "../utils/response";
 
-const { width, height } = Dimensions.get("window");
+const { width } = Dimensions.get("window");
 
-const ForgotPasswordScreen2 = () => {
-  const navigation = useNavigation();
+const AuthenticationScreen1 = () => {
   const videoRef = useRef(null);
 
   useEffect(() => {
@@ -34,6 +32,7 @@ const ForgotPasswordScreen2 = () => {
       }
     }
   };
+
   return (
     <View style={styles.container}>
       <Video
@@ -46,21 +45,29 @@ const ForgotPasswordScreen2 = () => {
       <CustomHeader />
       <Logo />
       <View style={styles.overlay}>
-        <Text style={styles.title}>Forgot Password</Text>
+        <Text style={styles.keepAccountSecureText}>
+          We Keep The Account Secure1
+        </Text>
+        <Text style={styles.layerOfSecurityText}>Layer of Security</Text>
+        <Text style={styles.messageRatesText}>
+          Message rates may apply. Message and data rates may apply.
+        </Text>
+        <Text style={styles.enterAuthenticationCodeText}>
+          Enter Authentication Code
+        </Text>
         <TextInput
           style={styles.textField}
-          placeholder="Phone Number"
+          placeholder="Authentication Code"
           placeholderTextColor="#9A9A9A"
         />
+
         <LinearGradient
           colors={["#1375C1", "#61AEE9"]}
           start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.requestNewPasswordButton}>
-          <TouchableOpacity onPress={() => navigation.navigate("Auth2")}>
-            <Text style={styles.requestNewPasswordButtonText}>
-              Request New Password
-            </Text>
+          end={{ x: 0, y: 1 }}
+          style={styles.nextButton}>
+          <TouchableOpacity>
+            <Text style={styles.nextButtonText}>Next</Text>
           </TouchableOpacity>
         </LinearGradient>
       </View>
@@ -81,7 +88,7 @@ const styles = StyleSheet.create({
     backgroundColor: "black",
   },
   video: {
-    width,
+    width: width,
     height: height * 0.9,
     position: "absolute",
   },
@@ -91,14 +98,31 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 10,
   },
-  logo: {
-    width: 227,
-    height: 227,
+
+  keepAccountSecureText: {
+    fontSize: 18,
+    fontFamily: "Open Sans Bold",
+    color: "#9A9A9A",
     marginBottom: 20,
   },
-  title: {
+  layerOfSecurityText: {
+    textAlign: "center",
     fontSize: 16,
-    fontFamily: "Open Sans Bold",
+    fontFamily: "Open Sans Regular",
+    color: "#9A9A9A",
+    marginBottom: 8,
+  },
+  messageRatesText: {
+    fontSize: 12,
+    textAlign: "center",
+    fontFamily: "Open Sans Regular",
+    color: "#9A9A9A",
+    marginBottom: 20,
+  },
+  enterAuthenticationCodeText: {
+    fontSize: 16,
+    textAlign: "center",
+    fontFamily: "Open Sans SemiBold",
     color: "#9A9A9A",
     marginBottom: 20,
   },
@@ -115,7 +139,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
   },
-  requestNewPasswordButton: {
+  textFieldPlacementText: {
+    fontSize: 15,
+    fontFamily: "Open Sans Regular",
+    color: "#9A9A9A",
+    marginBottom: 20,
+  },
+  nextButton: {
     width: width * 0.8,
     height: 44,
     justifyContent: "center",
@@ -123,16 +153,10 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: 20,
   },
-  requestNewPasswordButtonText: {
+  nextButtonText: {
     fontSize: 18,
     fontFamily: "Open Sans Bold",
     color: "#FFFFFF",
-  },
-  tryAnotherWayText: {
-    fontSize: 16,
-    fontFamily: "Open Sans Bold",
-    color: "#0A84FF",
-    marginBottom: 20,
   },
   needHelp: {
     flexDirection: "row",
@@ -151,4 +175,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ForgotPasswordScreen2;
+export default AuthenticationScreen1;

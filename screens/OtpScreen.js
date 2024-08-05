@@ -16,6 +16,8 @@ import { Video, ResizeMode } from "expo-av";
 import { LinearGradient } from "expo-linear-gradient";
 import { height, width } from "../utils/response";
 import { assets } from "../assets";
+import Logo from "../components/Logo";
+import CustomHeader from "../components/CustomHeader";
 
 const videoSource = require("../assets/introVid.mp4");
 
@@ -60,7 +62,7 @@ const OtpScreen = () => {
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <View style={styles.scrollContainer}>
         <Video
           ref={videoRef}
           source={videoSource}
@@ -69,11 +71,8 @@ const OtpScreen = () => {
           isLooping
           onPlaybackStatusUpdate={(status) => setStatus(() => status)}
         />
-        <Image
-          resizeMode="cover"
-          source={assets.logo_without_text}
-          style={styles.logo}
-        />
+        <CustomHeader />
+        <Logo />
         <View style={styles.overlay}>
           <Text style={styles.verification}>OTP Verification</Text>
           <View
@@ -120,7 +119,8 @@ const OtpScreen = () => {
             end={{ x: 0, y: 1 }}
             style={styles.verifyButton}
             colors={["#1375C1", "#61AEE9"]}>
-            <TouchableOpacity onPress={() => navigation.navigate("Home")}>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("MultiFactorAuth")}>
               <Text style={styles.verifyButtonText}>Next</Text>
             </TouchableOpacity>
           </LinearGradient>
@@ -132,7 +132,7 @@ const OtpScreen = () => {
             </TouchableOpacity>
           </View>
         </View>
-      </ScrollView>
+      </View>
     </KeyboardAvoidingView>
   );
 };

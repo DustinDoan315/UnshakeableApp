@@ -13,6 +13,7 @@ import { Video, ResizeMode } from "expo-av";
 import { LinearGradient } from "expo-linear-gradient";
 import { height, width } from "../utils/response";
 import { assets } from "../assets";
+import Logo from "../components/Logo";
 
 const videoSource = require("../assets/introVid.mp4");
 
@@ -45,16 +46,7 @@ const LoginScreen = () => {
         isLooping
         onPlaybackStatusUpdate={(status) => setStatus(() => status)}
       />
-      <Image
-        resizeMode="cover"
-        source={assets.logo_without_text}
-        style={{
-          alignSelf: "center",
-          marginTop: 100,
-          width: 275,
-          height: 250,
-        }}
-      />
+      <Logo marginTop={50} marginBottom={75} />
       <View style={styles.overlay}>
         <TextInput
           style={styles.textField}
@@ -67,7 +59,9 @@ const LoginScreen = () => {
           placeholderTextColor="#9A9A9A"
           secureTextEntry
         />
-        <TouchableOpacity style={styles.forgotPasswordContainer}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate("ForgotPassword1")}
+          style={styles.forgotPasswordContainer}>
           <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
         </TouchableOpacity>
         <LinearGradient
@@ -79,12 +73,12 @@ const LoginScreen = () => {
             <Text style={styles.loginButtonText}>Login</Text>
           </TouchableOpacity>
         </LinearGradient>
-        <View style={styles.signUpContainer}>
-          <Text style={styles.dontHaveAccountText}>Don’t have an account?</Text>
-          <TouchableOpacity onPress={() => navigation.navigate("SignUp")}>
-            <Text style={styles.signUpText}>Sign Up</Text>
-          </TouchableOpacity>
-        </View>
+      </View>
+      <View style={styles.signUpContainer}>
+        <Text style={styles.dontHaveAccountText}>Don’t have an account?</Text>
+        <TouchableOpacity onPress={() => navigation.navigate("SignUp")}>
+          <Text style={styles.signUpText}>Sign Up</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -101,7 +95,6 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
   overlay: {
-    flex: 1,
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 20,
@@ -147,6 +140,7 @@ const styles = StyleSheet.create({
   },
   signUpContainer: {
     flexDirection: "row",
+    alignSelf: "center",
     position: "absolute",
     bottom: 0,
   },

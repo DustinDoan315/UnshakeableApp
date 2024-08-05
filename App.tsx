@@ -15,6 +15,8 @@ import ContactUsErrorScreen from "./screens/ContactUsErrorScreen";
 import { SafeAreaView, StatusBar } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import OtpScreen from "./screens/OtpScreen";
+import AuthenticationScreen1 from "./screens/AuthenticationScreen1";
+import AuthenticationScreen2 from "./screens/AuthenticationScreen2";
 
 const Stack = createStackNavigator();
 
@@ -35,7 +37,8 @@ const App = () => {
           <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="OTP" component={OtpScreen} />
           <Stack.Screen name="Home" component={HomeScreen} />
-
+          <Stack.Screen name="Auth1" component={AuthenticationScreen1} />
+          <Stack.Screen name="Auth2" component={AuthenticationScreen2} />
           <Stack.Screen
             name="MultiFactorAuth"
             component={MultiFactorAuthScreen}

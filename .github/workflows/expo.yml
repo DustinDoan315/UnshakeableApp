@@ -25,7 +25,8 @@ jobs:
         run: npm install -g expo-cli
 
       - name: Login to Expo
-        run: expo login --token "$EXPO_TOKEN"
+        run: |
+          echo "$EXPO_TOKEN" > ~/.expo/token
 
       - name: Publish to Expo
         run: expo publish

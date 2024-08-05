@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -10,45 +10,68 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Video, ResizeMode } from "expo-av";
+import { LinearGradient } from "expo-linear-gradient";
+import Logo from "../components/Logo";
+import CustomHeader from "../components/CustomHeader";
+import { assets } from "../assets";
 
 const { width, height } = Dimensions.get("window");
 
 const ForgotPasswordScreen1 = () => {
   const navigation = useNavigation();
+  const videoRef = useRef(null);
 
+  useEffect(() => {
+    startPlayback();
+  }, []);
+
+  const startPlayback = async () => {
+    if (videoRef.current) {
+      try {
+        await videoRef.current.playAsync();
+      } catch (error) {
+        console.error("Error starting video playback:", error);
+      }
+    }
+  };
   return (
     <View style={styles.container}>
-      {/* <Video
-        source={require("../assets/57.MP4")}
+      <Video
+        ref={videoRef}
+        source={assets.videoSource}
         style={styles.video}
-        resizeMode="cover"
-        repeat
-        muted
-      /> */}
+        resizeMode={ResizeMode.CONTAIN}
+        isLooping
+      />
+      <CustomHeader />
+      <Logo />
       <View style={styles.overlay}>
-        {/* <Image
-          source={require("../assets/Unshakeable_Full_Color_Logomark Minus_Text@3x.png")}
-          style={styles.logo}
-        /> */}
         <Text style={styles.title}>Forgot Password</Text>
         <TextInput
           style={styles.textField}
-          placeholder="Enter Email"
+          placeholder="Email Address"
           placeholderTextColor="#9A9A9A"
         />
+        <LinearGradient
+          colors={["#1375C1", "#61AEE9"]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.requestNewPasswordButton}>
+          <TouchableOpacity onPress={() => navigation.navigate("Auth1")}>
+            <Text style={styles.requestNewPasswordButtonText}>
+              Request New Password
+            </Text>
+          </TouchableOpacity>
+        </LinearGradient>
         <TouchableOpacity
-          style={styles.requestNewPasswordButton}
-          onPress={() => navigation.navigate("ResetPassword")}>
-          <Text style={styles.requestNewPasswordButtonText}>
-            Request New Password
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity>
+          onPress={() => navigation.navigate("ForgotPassword2")}>
           <Text style={styles.tryAnotherWayText}>Try Another Way</Text>
         </TouchableOpacity>
-        <Text style={styles.needHelpText}>Need Help?</Text>
-        <TouchableOpacity>
-          <Text style={styles.contactUsText}>Contact Us</Text>
+      </View>
+      <View style={styles.needHelp}>
+        <Text style={styles.needHelpText}>Need help?</Text>
+        <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+          <Text style={styles.needHelpBtn}>Contact Us</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -58,20 +81,19 @@ const ForgotPasswordScreen1 = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
     alignItems: "center",
+    backgroundColor: "black",
   },
   video: {
     width,
-    height,
+    height: height * 0.9,
     position: "absolute",
   },
   overlay: {
-    flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0,0,0,0.5)",
     padding: 20,
+    borderRadius: 10,
   },
   logo: {
     width: 227,
@@ -91,17 +113,18 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     marginBottom: 12,
     paddingHorizontal: 10,
+    borderRadius: 8,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.25,
     shadowRadius: 4,
   },
   requestNewPasswordButton: {
-    width: 110,
+    width: width * 0.8,
     height: 44,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "linear-gradient(180deg, #1375C1 0%, #61AEE9 100%)",
+    borderRadius: 8,
     marginBottom: 20,
   },
   requestNewPasswordButtonText: {
@@ -115,12 +138,17 @@ const styles = StyleSheet.create({
     color: "#0A84FF",
     marginBottom: 20,
   },
+  needHelp: {
+    flexDirection: "row",
+    position: "absolute",
+    bottom: 0,
+  },
   needHelpText: {
     fontSize: 15,
     fontFamily: "Open Sans SemiBold",
     color: "#9A9A9A",
   },
-  contactUsText: {
+  needHelpBtn: {
     fontSize: 15,
     fontFamily: "Open Sans Bold",
     color: "#0A84FF",

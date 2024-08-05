@@ -13,6 +13,7 @@ import { Video, ResizeMode } from "expo-av";
 import { LinearGradient } from "expo-linear-gradient";
 import CustomHeader from "../components/CustomHeader";
 import { assets } from "../assets";
+import Logo from "../components/Logo";
 
 const { width, height } = Dimensions.get("window");
 
@@ -46,15 +47,7 @@ const SignUpScreen = () => {
         onPlaybackStatusUpdate={(status) => setStatus(() => status)}
       />
       <CustomHeader />
-      <Image
-        resizeMode="cover"
-        source={assets.logo_without_text}
-        style={{
-          alignSelf: "center",
-          width: 275,
-          height: 250,
-        }}
-      />
+      <Logo />
 
       <View style={styles.overlay}>
         <Text style={styles.title}>Create your account</Text>
