@@ -16,7 +16,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: 14
+          node-version: "14"
 
       - name: Install dependencies
         run: npm install
@@ -27,4 +27,4 @@ jobs:
       - name: Publish to Expo
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-        run: expo login --token "$EXPO_TOKEN" && expo publish
+        run: expo publish --release-channel production
