@@ -27,4 +27,4 @@ jobs:
       - name: Update EAS
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-        run: eas update
+        run: eas update --branch main
