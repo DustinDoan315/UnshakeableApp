@@ -6,7 +6,11 @@ import {
   TouchableOpacity,
   StyleSheet,
   Dimensions,
-  Image,
+  KeyboardAvoidingView,
+  Platform,
+  TouchableWithoutFeedback,
+  Keyboard,
+  ScrollView,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Video, ResizeMode } from "expo-av";
@@ -14,13 +18,45 @@ import { LinearGradient } from "expo-linear-gradient";
 import CustomHeader from "../components/CustomHeader";
 import { assets } from "../assets";
 import Logo from "../components/Logo";
+import { useForm, Controller } from "react-hook-form";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 const { width, height } = Dimensions.get("window");
 
+const videoSource = require("../assets/1min.mp4");
+
+const schema = yup.object().shape({
+  firstName: yup.string().required("First name is required"),
+  lastName: yup.string().required("Last name is required"),
+  email: yup.string().email("Invalid email").required("Email is required"),
+  phoneNumber: yup
+    .string()
+    .matches(/^[0-9]+$/, "Phone number must be only digits")
+    .min(10, "Phone number must be at least 10 digits")
+    .required("Phone number is required"),
+  username: yup.string().required("Username is required"),
+  password: yup
+    .string()
+    .min(6, "Password must be at least 6 characters")
+    .required("Password is required"),
+  confirmPassword: yup
+    .string()
+    .oneOf([yup.ref("password"), null], "Passwords must match")
+    .required("Confirm password is required"),
+});
+
 const SignUpScreen = () => {
   const navigation = useNavigation();
-  const [status, setStatus] = useState({});
   const videoRef = useRef(null);
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
 
   useEffect(() => {
     startPlayback();
@@ -36,78 +72,197 @@ const SignUpScreen = () => {
     }
   };
 
-  return (
-    <View style={styles.container}>
-      <Video
-        ref={videoRef}
-        source={assets.videoSource}
-        style={styles.video}
-        resizeMode={ResizeMode.CONTAIN}
-        isLooping
-        onPlaybackStatusUpdate={(status) => setStatus(() => status)}
-      />
-      <CustomHeader />
-      <Logo />
+  const onSubmit = (data) => {
+    console.log(data);
+    navigation.navigate("MultiFactorAuth");
+  };
 
-      <View style={styles.overlay}>
-        <Text style={styles.title}>Create your account</Text>
-        <View style={styles.row}>
-          <TextInput
-            style={[styles.textField, styles.halfWidth]}
-            placeholder="First Name"
-            placeholderTextColor="#9A9A9A"
+  return (
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <ScrollView style={styles.container}>
+          <Video
+            ref={videoRef}
+            source={videoSource}
+            style={styles.video}
+            resizeMode={ResizeMode.CONTAIN}
+            isLooping
           />
-          <TextInput
-            style={[styles.textField, styles.halfWidth]}
-            placeholder="Last Name"
-            placeholderTextColor="#9A9A9A"
-          />
-        </View>
-        <TextInput
-          style={styles.textField}
-          placeholder="Email"
-          placeholderTextColor="#9A9A9A"
-        />
-        <TextInput
-          style={styles.textField}
-          placeholder="Phone Number"
-          placeholderTextColor="#9A9A9A"
-          keyboardType="phone-pad"
-        />
-        <TextInput
-          style={styles.textField}
-          placeholder="Username"
-          placeholderTextColor="#9A9A9A"
-        />
-        <TextInput
-          style={styles.textField}
-          placeholder="Password"
-          placeholderTextColor="#9A9A9A"
-          secureTextEntry
-        />
-        <TextInput
-          style={styles.textField}
-          placeholder="Confirm Password"
-          placeholderTextColor="#9A9A9A"
-          secureTextEntry
-        />
-        <LinearGradient
-          start={{ x: 0, y: 0.1 }}
-          end={{ x: 0, y: 0.75 }}
-          style={styles.signupButton}
-          colors={["#1375C1", "#61AEE9"]}>
-          <TouchableOpacity onPress={() => navigation.navigate("OTP")}>
-            <Text style={styles.signupButtonText}>Next</Text>
-          </TouchableOpacity>
-        </LinearGradient>
-        <View style={styles.signUpContainer}>
-          <Text style={styles.dontHaveAccountText}>Already a user?</Text>
-          <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-            <Text style={styles.signUpText}>Login</Text>
-          </TouchableOpacity>
-        </View>
+          <CustomHeader />
+          <Logo />
+          <View style={styles.overlay}>
+            <Text style={styles.title}>Create your account</Text>
+            <View style={styles.row}>
+              <Controller
+                control={control}
+                name="firstName"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <View
+                    style={{
+                      justifyContent: "center",
+                      width: "48%",
+                    }}>
+                    <TextInput
+                      style={[styles.textField, styles.halfWidth]}
+                      placeholder="First Name"
+                      placeholderTextColor="#9A9A9A"
+                      onBlur={onBlur}
+                      onChangeText={onChange}
+                      value={value}
+                    />
+                    {errors.firstName && (
+                      <Text style={styles.errorText}>
+                        {errors.firstName.message}
+                      </Text>
+                    )}
+                  </View>
+                )}
+              />
+
+              <Controller
+                control={control}
+                name="lastName"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <View
+                    style={{
+                      justifyContent: "center",
+                      width: "48%",
+                    }}>
+                    <TextInput
+                      style={[styles.textField, styles.halfWidth]}
+                      placeholder="Last Name"
+                      placeholderTextColor="#9A9A9A"
+                      onBlur={onBlur}
+                      onChangeText={onChange}
+                      value={value}
+                    />
+                    {errors.lastName && (
+                      <Text style={styles.errorText}>
+                        {errors.lastName.message}
+                      </Text>
+                    )}
+                  </View>
+                )}
+              />
+            </View>
+            <Controller
+              control={control}
+              name="email"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <TextInput
+                  style={styles.textField}
+                  placeholder="Email"
+                  placeholderTextColor="#9A9A9A"
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  value={value}
+                />
+              )}
+            />
+            {errors.email && (
+              <Text style={styles.errorText}>{errors.email.message}</Text>
+            )}
+            <Controller
+              control={control}
+              name="phoneNumber"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <TextInput
+                  style={styles.textField}
+                  placeholder="Phone Number"
+                  placeholderTextColor="#9A9A9A"
+                  keyboardType="phone-pad"
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  value={value}
+                />
+              )}
+            />
+            {errors.phoneNumber && (
+              <Text style={styles.errorText}>{errors.phoneNumber.message}</Text>
+            )}
+            <Controller
+              control={control}
+              name="username"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <TextInput
+                  style={styles.textField}
+                  placeholder="Username"
+                  placeholderTextColor="#9A9A9A"
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  value={value}
+                />
+              )}
+            />
+            {errors.username && (
+              <Text style={styles.errorText}>{errors.username.message}</Text>
+            )}
+            <Controller
+              control={control}
+              name="password"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <TextInput
+                  style={styles.textField}
+                  placeholder="Password"
+                  placeholderTextColor="#9A9A9A"
+                  secureTextEntry
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  value={value}
+                />
+              )}
+            />
+            {errors.password && (
+              <Text style={styles.errorText}>{errors.password.message}</Text>
+            )}
+            <Controller
+              control={control}
+              name="confirmPassword"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <TextInput
+                  style={styles.textField}
+                  placeholder="Confirm Password"
+                  placeholderTextColor="#9A9A9A"
+                  secureTextEntry
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  value={value}
+                />
+              )}
+            />
+            {errors.confirmPassword && (
+              <Text style={styles.errorText}>
+                {errors.confirmPassword.message}
+              </Text>
+            )}
+            <LinearGradient
+              start={{ x: 0, y: 0.1 }}
+              end={{ x: 0, y: 0.75 }}
+              style={styles.signupButton}
+              colors={["#1375C1", "#61AEE9"]}>
+              <TouchableOpacity
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+                onPress={handleSubmit(onSubmit)}>
+                <Text style={styles.signupButtonText}>Next</Text>
+              </TouchableOpacity>
+            </LinearGradient>
+          </View>
+        </ScrollView>
+      </TouchableWithoutFeedback>
+      <View style={styles.signUpContainer}>
+        <Text style={styles.dontHaveAccountText}>Already a user?</Text>
+        <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+          <Text style={styles.signUpText}>Login</Text>
+        </TouchableOpacity>
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -137,7 +292,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     width: "100%",
-    marginBottom: 12,
   },
   textField: {
     width: "100%",
@@ -155,18 +309,14 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
   },
   halfWidth: {
-    width: "48%",
+    width: "100%",
   },
-  forgotPasswordContainer: {
-    alignSelf: "flex-end",
-    marginRight: 25,
-    marginTop: -7,
-  },
-  forgotPasswordText: {
-    fontSize: 14,
-    fontFamily: "Open Sans Bold",
-    color: "#0A84FF",
-    marginBottom: 20,
+  errorText: {
+    alignSelf: "flex-start",
+    color: "red",
+    fontSize: 12,
+    marginTop: -5,
+    marginBottom: 10,
   },
   signupButton: {
     width: "100%",
@@ -183,6 +333,7 @@ const styles = StyleSheet.create({
   },
   signUpContainer: {
     flexDirection: "row",
+    alignSelf: "center",
     position: "absolute",
     bottom: 0,
   },

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -10,8 +10,9 @@ import {
   Modal,
   Pressable,
   FlatList,
-  Switch,
-  Image,
+  TouchableWithoutFeedback,
+  Keyboard,
+  ScrollView,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import CustomSwitch from "../components/CustomSwitch";
@@ -20,6 +21,11 @@ import { assets } from "../assets";
 import { height, width } from "../utils/response";
 import Logo from "../components/Logo";
 import { LinearGradient } from "expo-linear-gradient";
+import { useForm, Controller } from "react-hook-form";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { ResizeMode, Video } from "expo-av";
+const videoSource = require("../assets/1min.mp4");
 
 const securityQuestions = [
   { label: "What is your mother's maiden name?", value: "1" },
@@ -27,28 +33,65 @@ const securityQuestions = [
   { label: "What was the name of your elementary school?", value: "3" },
 ];
 
+const schema = yup.object().shape({
+  questions: yup.array().of(yup.string().required("Please select a question")),
+  answers: yup
+    .array()
+    .of(yup.string().required("Please provide an answer"))
+    .min(3, "All answers are required"),
+});
+
 const MultiFactorAuthScreen = () => {
   const navigation = useNavigation();
-  const [selectedQuestions, setSelectedQuestions] = useState(["", "", ""]);
-  const [answers, setAnswers] = useState(["", "", ""]);
   const [isModalVisible, setModalVisible] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(null);
   const [isFaceIDEnabled, setFaceIDEnabled] = useState(false);
 
+  const videoRef = useRef(null);
+
+  useEffect(() => {
+    startPlayback();
+  }, []);
+
+  const startPlayback = async () => {
+    if (videoRef.current) {
+      try {
+        await videoRef.current.playAsync();
+      } catch (error) {
+        console.error("Error starting video playback:", error);
+      }
+    }
+  };
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+    getValues,
+  } = useForm({
+    resolver: yupResolver(schema),
+    defaultValues: {
+      questions: ["", "", ""],
+      answers: ["", "", ""],
+    },
+  });
+
+  const values = getValues();
+
   const handleQuestionChange = (question) => {
     if (currentIndex !== null) {
-      const updatedQuestions = [...selectedQuestions];
-      updatedQuestions[currentIndex] = question;
-      setSelectedQuestions(updatedQuestions);
+      const questions = getValues("questions");
+      questions[currentIndex] = question;
+      setValue("questions", questions);
       setModalVisible(false);
       setCurrentIndex(null);
     }
   };
 
-  const handleAnswerChange = (text, index) => {
-    const updatedAnswers = [...answers];
-    updatedAnswers[index] = text;
-    setAnswers(updatedAnswers);
+  const onSubmit = (data) => {
+    console.log(data);
+    navigation.navigate("Login");
   };
 
   const renderQuestionItem = ({ item }) => (
@@ -63,86 +106,130 @@ const MultiFactorAuthScreen = () => {
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}>
-      <CustomHeader />
-      <Logo />
-
-      <View style={styles.overlay}>
-        <Text style={styles.title}>Multi-Factor Authentication</Text>
-
-        {Array.from({ length: 3 }).map((_, index) => (
-          <View key={index} style={styles.questionAnswerContainer}>
-            <TouchableOpacity
-              style={[
-                styles.picker,
-                !selectedQuestions[index] ? styles.pickerPlaceholder : null,
-              ]}
-              onPress={() => {
-                setCurrentIndex(index);
-                setModalVisible(true);
-              }}>
-              <Text style={styles.pickerText}>
-                {selectedQuestions[index].length > 20
-                  ? selectedQuestions[index].slice(0, 26) + "..."
-                  : selectedQuestions[index] ||
-                    `Select a question ${index + 1}`}
-              </Text>
-            </TouchableOpacity>
-            <TextInput
-              style={styles.textField}
-              placeholder="Answer"
-              placeholderTextColor="#9A9A9A"
-              value={answers[index]}
-              onChangeText={(text) => handleAnswerChange(text, index)}
-            />
-          </View>
-        ))}
-
-        <View style={styles.faceIDContainer}>
-          <Text style={styles.enableFaceIDText}>Enable Face ID</Text>
-          <CustomSwitch
-            value={isFaceIDEnabled}
-            onValueChange={(value) => setFaceIDEnabled(value)}
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <ScrollView style={styles.container}>
+          <Video
+            ref={videoRef}
+            source={videoSource}
+            style={styles.video}
+            resizeMode={ResizeMode.CONTAIN}
+            isLooping
           />
-        </View>
+          <CustomHeader />
+          <Logo />
 
-        <LinearGradient
-          start={{ x: 0, y: 0.1 }}
-          end={{ x: 0, y: 1 }}
-          style={styles.submitButton}
-          colors={["#1375C1", "#61AEE9"]}>
-          <TouchableOpacity onPress={() => navigation.navigate("Home")}>
-            <Text style={styles.submitButtonText}>Submit</Text>
-          </TouchableOpacity>
-        </LinearGradient>
+          <View style={styles.overlay}>
+            <Text style={styles.title}>Multi-Factor Authentication</Text>
 
-        <View style={styles.needHelp}>
-          <Text style={styles.needHelpText}>Need help?</Text>
-          <TouchableOpacity onPress={() => navigation.navigate("ContactUs")}>
-            <Text style={styles.needHelpBtn}>Contact Us</Text>
-          </TouchableOpacity>
-        </View>
+            {Array.from({ length: 3 }).map((_, index) => (
+              <View key={index} style={styles.questionAnswerContainer}>
+                <Controller
+                  control={control}
+                  name={`questions[${index}]`}
+                  render={({}) => (
+                    <TouchableOpacity
+                      style={[
+                        styles.picker,
+                        !values.questions?.[index]
+                          ? styles.pickerPlaceholder
+                          : null,
+                      ]}
+                      onPress={() => {
+                        setCurrentIndex(index);
+                        setModalVisible(true);
+                      }}>
+                      <Text style={styles.pickerText}>
+                        {values.questions?.[index].length > 20
+                          ? values.questions?.[index].slice(0, 26) + "..."
+                          : values.questions?.[index] ||
+                            `Select a question ${index + 1}`}
+                      </Text>
+                    </TouchableOpacity>
+                  )}
+                />
+                {errors.questions && errors.questions[index] && (
+                  <Text style={styles.errorText}>
+                    {errors.questions[index].message}
+                  </Text>
+                )}
+                <Controller
+                  control={control}
+                  name={`answers[${index}]`}
+                  render={({ field: { onChange, onBlur, value } }) => (
+                    <TextInput
+                      style={styles.textField}
+                      placeholder="Answer"
+                      placeholderTextColor="#9A9A9A"
+                      value={value}
+                      onBlur={onBlur}
+                      onChangeText={onChange}
+                    />
+                  )}
+                />
+                {errors.answers && errors.answers[index] && (
+                  <Text style={styles.errorText}>
+                    {errors.answers[index].message}
+                  </Text>
+                )}
+              </View>
+            ))}
 
-        <Modal
-          visible={isModalVisible}
-          transparent={true}
-          animationType="slide"
-          onRequestClose={() => setModalVisible(false)}>
-          <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-              <FlatList
-                data={securityQuestions}
-                renderItem={renderQuestionItem}
-                keyExtractor={(item) => item.value}
+            <View style={styles.faceIDContainer}>
+              <Text style={styles.enableFaceIDText}>Enable Face ID</Text>
+              <CustomSwitch
+                value={isFaceIDEnabled}
+                onValueChange={(value) => setFaceIDEnabled(value)}
               />
+            </View>
+
+            <LinearGradient
+              start={{ x: 0, y: 0.1 }}
+              end={{ x: 0, y: 1 }}
+              style={styles.submitButton}
+              colors={["#1375C1", "#61AEE9"]}>
               <TouchableOpacity
-                style={styles.modalCloseButton}
-                onPress={() => setModalVisible(false)}>
-                <Text style={styles.modalCloseButtonText}>Close</Text>
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+                onPress={handleSubmit(onSubmit)}>
+                <Text style={styles.submitButtonText}>Submit</Text>
+              </TouchableOpacity>
+            </LinearGradient>
+
+            <View style={styles.needHelp}>
+              <Text style={styles.needHelpText}>Need help?</Text>
+              <TouchableOpacity
+                onPress={() => navigation.navigate("ContactUs")}>
+                <Text style={styles.needHelpBtn}>Contact Us</Text>
               </TouchableOpacity>
             </View>
+
+            <Modal
+              visible={isModalVisible}
+              transparent={true}
+              animationType="slide"
+              onRequestClose={() => setModalVisible(false)}>
+              <View style={styles.modalContainer}>
+                <View style={styles.modalContent}>
+                  <FlatList
+                    data={securityQuestions}
+                    renderItem={renderQuestionItem}
+                    keyExtractor={(item) => item.value}
+                  />
+                  <TouchableOpacity
+                    style={styles.modalCloseButton}
+                    onPress={() => setModalVisible(false)}>
+                    <Text style={styles.modalCloseButtonText}>Close</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </Modal>
           </View>
-        </Modal>
-      </View>
+        </ScrollView>
+      </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
   );
 };
@@ -151,6 +238,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "black",
+  },
+  video: {
+    width: width,
+    height: height * 0.9,
+    position: "absolute",
   },
   overlay: {
     flex: 1,
@@ -195,6 +287,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     marginBottom: 16,
+  },
+  errorText: {
+    color: "red",
+    fontSize: 12,
+    marginBottom: 10,
+    marginTop: -7,
   },
   submitButton: {
     width: width * 0.8,
