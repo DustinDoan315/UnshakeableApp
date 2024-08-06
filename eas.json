@@ -8,13 +8,5 @@
       "distribution": "store",
       "developmentClient": false
     }
-  },
-  "updates": {
-    "production": {
-      "channel": "production"
-    },
-    "development": {
-      "channel": "development"
-    }
   }
 }
