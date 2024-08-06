@@ -1,13 +1,20 @@
 {
   "build": {
     "development": {
-      "workflow": "managed"
+      "distribution": "internal",
+      "developmentClient": true
     },
     "production": {
-      "workflow": "managed"
+      "distribution": "store",
+      "developmentClient": false
     }
   },
-  "submit": {
-    "production": {}
+  "updates": {
+    "production": {
+      "channel": "production"
+    },
+    "development": {
+      "channel": "development"
+    }
   }
 }
