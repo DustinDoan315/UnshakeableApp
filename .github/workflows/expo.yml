@@ -27,4 +27,4 @@ jobs:
       - name: Update EAS
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-        run: eas update --branch main
+        run: eas update --branch main --message "Automatic update from GitHub Actions"
