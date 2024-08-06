@@ -1,4 +1,4 @@
-name: EAS Update
+name: Expo Public
 
 on:
   push:
@@ -25,6 +25,6 @@ jobs:
         run: yarn global add eas-cli
 
       - name: Update EAS
+        run: eas update --release-channel production
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-        run: eas update --release-channel production
