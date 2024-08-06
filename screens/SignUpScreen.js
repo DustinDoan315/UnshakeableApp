@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -11,16 +11,17 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   ScrollView,
+  Alert,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Video, ResizeMode } from "expo-av";
 import { LinearGradient } from "expo-linear-gradient";
 import CustomHeader from "../components/CustomHeader";
-import { assets } from "../assets";
 import Logo from "../components/Logo";
 import { useForm, Controller } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import apiClient from "../utils/axiosConfig";
 
 const { width, height } = Dimensions.get("window");
 
@@ -35,7 +36,7 @@ const schema = yup.object().shape({
     .matches(/^[0-9]+$/, "Phone number must be only digits")
     .min(10, "Phone number must be at least 10 digits")
     .required("Phone number is required"),
-  username: yup.string().required("Username is required"),
+  userName: yup.string().required("UserName is required"),
   password: yup
     .string()
     .min(6, "Password must be at least 6 characters")
@@ -71,10 +72,22 @@ const SignUpScreen = () => {
       }
     }
   };
+  const createUser = async (user) => {
+    try {
+      console.log(user);
+      const response = await apiClient.post("/users", user);
+      Alert.alert("Create new user Successful", `Token: ${response.data.id}`);
+      navigation.navigate("Login");
+    } catch (error) {
+      Alert.alert(
+        "Create new user Failed",
+        error.response.status === 409 ? "Existing Account" : error.message
+      );
+    }
+  };
 
   const onSubmit = (data) => {
-    console.log(data);
-    navigation.navigate("MultiFactorAuth");
+    createUser(data);
   };
 
   return (
@@ -184,11 +197,11 @@ const SignUpScreen = () => {
             )}
             <Controller
               control={control}
-              name="username"
+              name="userName"
               render={({ field: { onChange, onBlur, value } }) => (
                 <TextInput
                   style={styles.textField}
-                  placeholder="Username"
+                  placeholder="UserName"
                   placeholderTextColor="#9A9A9A"
                   onBlur={onBlur}
                   onChangeText={onChange}
@@ -196,8 +209,8 @@ const SignUpScreen = () => {
                 />
               )}
             />
-            {errors.username && (
-              <Text style={styles.errorText}>{errors.username.message}</Text>
+            {errors.userName && (
+              <Text style={styles.errorText}>{errors.userName.message}</Text>
             )}
             <Controller
               control={control}

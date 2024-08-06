@@ -9,6 +9,7 @@ import {
   Platform,
   TouchableWithoutFeedback,
   Keyboard,
+  Alert,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Video, ResizeMode } from "expo-av";
@@ -18,7 +19,8 @@ import Logo from "../components/Logo";
 import { useForm, Controller } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import CustomHeader from "../components/CustomHeader";
+import apiClient from "../utils/axiosConfig";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const videoSource = require("../assets/1min.mp4");
 
@@ -57,13 +59,21 @@ const LoginScreen = () => {
     }
   };
 
-  const onSubmit = (data) => {
-    console.log(data);
-    navigation.navigate("Subscription");
+  const loginUser = async (email, password) => {
+    try {
+      const response = await apiClient.post("/login", { email, password });
+      const { token } = response.data;
+      await AsyncStorage.setItem("@auth_token", token);
+      Alert.alert("Login Successful");
+      navigation.navigate("Subscription");
+    } catch (error) {
+      Alert.alert("Login Failed", error.message);
+    }
   };
 
-  const emailValue = watch("email");
-  const passwordValue = watch("password");
+  const onSubmit = (data) => {
+    loginUser(data.email, data.password);
+  };
 
   return (
     <KeyboardAvoidingView
