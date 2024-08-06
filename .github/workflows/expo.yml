@@ -1,4 +1,4 @@
-name: Expo Public
+name: EAS Update
 
 on:
   push:
@@ -19,17 +19,12 @@ jobs:
           node-version: "14"
 
       - name: Install dependencies
-        run: npm install
+        run: yarn install
 
       - name: Install EAS CLI
-        run: npm install -g eas-cli
-
-      - name: Login to EAS
-        env:
-          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-        run: eas login --token "$EXPO_TOKEN"
+        run: yarn global add eas-cli
 
       - name: Update EAS
-        run: eas update --release-channel production
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: eas update --release-channel production
