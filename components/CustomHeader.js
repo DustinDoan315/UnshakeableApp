@@ -34,9 +34,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 16,
     paddingVertical: 10,
+    zIndex: 99,
   },
   backButton: {
-    marginRight: 16,
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 99,
   },
   headerTitle: {
     fontSize: 18,

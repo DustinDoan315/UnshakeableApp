@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
   },
   requestNewPasswordButton: {
-    width: width * 0.8,
+    width: 318,
     height: 44,
     justifyContent: "center",
     alignItems: "center",

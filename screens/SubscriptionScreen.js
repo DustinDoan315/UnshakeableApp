@@ -132,6 +132,7 @@ const SubscriptionScreen = ({ navigation }) => {
     <StripeProvider publishableKey="your-publishable-key">
       <View style={styles.container}>
         <CustomHeader />
+
         <Video
           ref={videoRef}
           source={videoSource}

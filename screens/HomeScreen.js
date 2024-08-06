@@ -4,9 +4,13 @@ import CustomHeader from "../components/CustomHeader";
 
 const HomeScreen = () => {
   return (
-    <View>
+    <View
+      style={{
+        justifyContent: "center",
+        alignItems: "center",
+      }}>
       <CustomHeader />
-      <Text>HomeScreen</Text>
+      <Text>Home Screen</Text>
     </View>
   );
 };

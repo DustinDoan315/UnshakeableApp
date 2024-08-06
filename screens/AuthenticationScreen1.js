@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
   },
   nextButton: {
-    width: width * 0.8,
+    width: 318,
     height: 44,
     justifyContent: "center",
     alignItems: "center",
