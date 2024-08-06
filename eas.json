@@ -1,0 +1,13 @@
+{
+  "build": {
+    "development": {
+      "workflow": "managed"
+    },
+    "production": {
+      "workflow": "managed"
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}
