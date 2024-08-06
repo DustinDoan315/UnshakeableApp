@@ -59,7 +59,7 @@ const LoginScreen = () => {
 
   const onSubmit = (data) => {
     console.log(data);
-    navigation.navigate("Home");
+    navigation.navigate("Subscription");
   };
 
   const emailValue = watch("email");

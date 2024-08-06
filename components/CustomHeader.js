@@ -5,7 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 import { assets } from "../assets";
 import { width } from "../utils/response";
 
-const CustomHeader = ({ title }: any) => {
+const CustomHeader = ({ title }) => {
   const navigation = useNavigation();
 
   return (

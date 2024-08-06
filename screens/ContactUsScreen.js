@@ -26,7 +26,6 @@ import SuccessFailModal from "../components/SuccessFailModal";
 
 const { width } = Dimensions.get("window");
 
-// Validation schema with Yup
 const schema = yup.object().shape({
   firstName: yup.string().required("First name is required"),
   lastName: yup.string().required("Last name is required"),
@@ -232,7 +231,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   innerContainer: {
-    width: width * 0.8,
+    width: width,
     justifyContent: "center",
     alignItems: "center",
   },

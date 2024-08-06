@@ -12,7 +12,7 @@ import {
 
 const { width, height } = Dimensions.get("window");
 
-const SuccessFailModal = ({ isVisible, isSuccess, onClose }) => {
+const SuccessFailModal = ({ isVisible, isSuccess, onClose, title }) => {
   const successImage = require("../assets/success_submitted.png");
   const failImage = require("../assets/fail_submitted.png");
 
@@ -30,7 +30,7 @@ const SuccessFailModal = ({ isVisible, isSuccess, onClose }) => {
           />
           <Text style={styles.text}>
             {isSuccess
-              ? "Success! Your inquiry has been submitted"
+              ? title || "Success! Your inquiry has been submitted"
               : "Error! Your inquiry has not been submitted"}
           </Text>
           {!isSuccess && (

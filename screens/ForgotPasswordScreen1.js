@@ -122,7 +122,7 @@ const ForgotPasswordScreen1 = () => {
       </TouchableWithoutFeedback>
       <View style={styles.needHelp}>
         <Text style={styles.needHelpText}>Need help?</Text>
-        <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+        <TouchableOpacity onPress={() => navigation.navigate("ContactUs")}>
           <Text style={styles.needHelpBtn}>Contact Us</Text>
         </TouchableOpacity>
       </View>

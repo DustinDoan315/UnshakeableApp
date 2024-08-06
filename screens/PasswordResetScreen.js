@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -21,6 +21,7 @@ import { height } from "../utils/response";
 import { useForm, Controller } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import SuccessFailModal from "../components/SuccessFailModal";
 
 const { width } = Dimensions.get("window");
 
@@ -37,6 +38,13 @@ const schema = yup.object().shape({
 
 const PasswordResetScreen = ({ navigation }) => {
   const videoRef = useRef(null);
+  const [isModalVisible, setModalVisible] = useState(false);
+
+  const handleOpenModal = () => setModalVisible(true);
+  const handleCloseModal = () => {
+    setModalVisible(false);
+    navigation.navigate("Login");
+  };
 
   const {
     control,
@@ -61,9 +69,7 @@ const PasswordResetScreen = ({ navigation }) => {
   };
 
   const onSubmit = (data) => {
-    Alert.alert("Password reset successful");
-    console.log("Form Data:", data);
-    // navigation.navigate("Login");
+    handleOpenModal();
   };
 
   return (
@@ -142,6 +148,13 @@ const PasswordResetScreen = ({ navigation }) => {
           <Text style={styles.needHelpBtn}>Contact Us</Text>
         </TouchableOpacity>
       </View>
+
+      <SuccessFailModal
+        isVisible={isModalVisible}
+        isSuccess={true}
+        onClose={handleCloseModal}
+        title={"Success! Your password has been reset"}
+      />
     </KeyboardAvoidingView>
   );
 };

@@ -29,7 +29,7 @@ const App = () => {
       <StatusBar backgroundColor={"transparent"} barStyle={"light-content"} />
       <NavigationContainer>
         <Stack.Navigator
-          initialRouteName="PasswordReset"
+          initialRouteName="Login"
           screenOptions={{ headerShown: false }}>
           <Stack.Screen name="SignUp" component={SignUpScreen} />
           <Stack.Screen name="Subscription" component={SubscriptionScreen} />
